@@ -40,3 +40,5 @@ INSERT INTO `app`.`apps` (`app_id`, `app_name`, `description`, `developer_id`, `
 
 INSERT INTO `app`.`apps` (`app_id`, `app_name`, `description`, `developer_id`, `url`, `price`, `downloaded_num`, `uploaded_date`, `latest_update`, `score`, `rating`, `current_version`, `whats_new`, `required_software`, `size`, `editors_choice`, `coming_soon`, `weekly_recommended`, `genre`) VALUES ('9', 'Badland Brawl', 'Explosive multiplayer brawler of epic action with easy-to-play but hard-to-master physics-based gameplay.', '8', 'https://play.google.com/store/apps/details?id=com.frogmind.badlandbrawl', 'FREE', '5,000,000+', '2019-05-01', '2019-05-09', '4.4 total 60506', 'Rated for 7+ Mild Violence', '1.6.4.1', '1.6.4.1 - Bug fixes', '4.0.3 and up', 'Varies with device', '1', '0', '0', 'Frogmind, Strategy');
                
+ALTER TABLE app.apps ADD FOREIGN KEY (developer_id) REFERENCES app.developer(developer_id);
+               
