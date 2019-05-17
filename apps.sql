@@ -42,3 +42,26 @@ INSERT INTO `app`.`apps` (`app_id`, `app_name`, `description`, `developer_id`, `
                
 ALTER TABLE app.apps ADD FOREIGN KEY (developer_id) REFERENCES app.developer(developer_id);
                
+UPDATE `app`.`apps` SET `downloaded_num` = '1000000000' WHERE (`app_id` = '2');
+UPDATE `app`.`apps` SET `downloaded_num` = '1000000000' WHERE (`app_id` = '3');
+UPDATE `app`.`apps` SET `downloaded_num` = '100000000' WHERE (`app_id` = '4');
+UPDATE `app`.`apps` SET `downloaded_num` = '50000000' WHERE (`app_id` = '5');
+UPDATE `app`.`apps` SET `downloaded_num` = '5000000000' WHERE (`app_id` = '6');
+UPDATE `app`.`apps` SET `downloaded_num` = '100000000' WHERE (`app_id` = '7');
+UPDATE `app`.`apps` SET `downloaded_num` = '1000000' WHERE (`app_id` = '8');
+UPDATE `app`.`apps` SET `downloaded_num` = '5000000' WHERE (`app_id` = '9');
+
+ALTER TABLE `app`.`apps` 
+CHANGE COLUMN `downloaded_num` `downloaded_num` BIGINT NULL DEFAULT NULL ;
+               
+ALTER TABLE `app`.`apps` 
+ADD COLUMN `sub_category` VARCHAR(45) NULL AFTER `genre`;
+
+UPDATE `app`.`apps` SET `sub_category` = 'Game' WHERE (`app_id` = '8');
+UPDATE `app`.`apps` SET `sub_category` = 'Game' WHERE (`app_id` = '9');
+               
+UPDATE `app`.`apps` SET `editors_choice_category` = 'Best app alltime' WHERE (`app_id` = '6');
+UPDATE `app`.`apps` SET `editors_choice_category` = 'Best game' WHERE (`app_id` = '9');
+
+
+
