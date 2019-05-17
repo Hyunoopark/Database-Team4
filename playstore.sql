@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS books(
 
 )DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `movies` ( 
+CREATE TABLE IF NOT EXISTS movies ( 
   movie_id INT NOT NULL AUTO_INCREMENT,
   product_id INT,
   title VARCHAR(40) NOT NULL,
@@ -79,7 +79,18 @@ CREATE TABLE IF NOT EXISTS `movies` (
   PRIMARY KEY (movie_id),
   foreign key (product_id) references product(product_id) on delete set null on update cascade
 
-)DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS myMovies ( 
+  user varchar(30) NOT NULL,
+  movie_id INT NOT NULL,
+  purchase_date datetime default current_timestamp,
+
+  PRIMARY KEY (user,movie_id),
+  INDEX movie_idx (movie_id),
+  constraint fk_user_mymovies foreign key (user) references user(email) on delete CASCADE on update CASCADE,
+  constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*
 CREATE TABLE IF NOT EXISTS wishList(
  user varchar(30) NOT NULL,
