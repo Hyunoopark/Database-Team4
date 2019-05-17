@@ -25,3 +25,7 @@ INSERT INTO `app`.`developer` (`developer_id`, `password`, `first_name`, `last_n
 INSERT INTO `app`.`developer` (`developer_id`, `password`, `first_name`, `last_name`, `date_of_birth`, `website`, `email`, `address`, `company`) VALUES ('4', 'ghkk7890', 'BS', 'Kim', '1966-03-08', 'help.notice@kakaocorp.com', 'beomsoo@kakaotalk.com', 'Seoul, South Korea', 'Kakao Corporation');
                
 INSERT INTO `app`.`developer` (`developer_id`, `password`, `first_name`, `last_name`, `date_of_birth`, `website`, `email`, `address`, `company`) VALUES ('7', 'bawe4322', 'GC', 'Lee', '1976-05-14', 'https://www.facebook.com/victor.kislyi', 'help@spcomes.com', '403, Ace Twin Tower 1 cha, 285, Digital-ro, Guro-gu, Seoul, Korea, 08381', 'Springcomes');
+
+INSERT INTO `app`.`developer` (`developer_id`, `password`, `first_name`, `last_name`, `date_of_birth`, `website`, `email`, `address`, `company`) VALUES ('5', 'nave2333', 'HJ', 'Lee', '1967-06-22', 'www.naver.com', 'naver_market@naver.com', 'Seongnam, South Korea', 'NAVER Corp.');
+
+INSERT INTO `app`.`developer` (`developer_id`, `password`, `first_name`, `last_name`, `date_of_birth`, `website`, `email`, `address`, `company`) VALUES ('8', 'bads2442', 'Johannes', 'Vuorinen', '1981-07-24', 'http://frogmind.com/author/johannes-vuorinen/', 'brawl@frogmind.com', 'Kansakoulukatu 5A 3A 00100 Helsinki Finland', 'Frogmind');
