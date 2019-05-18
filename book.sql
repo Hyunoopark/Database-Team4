@@ -21,8 +21,11 @@ CREATE TABLE IF NOT EXISTS myBooks (
   book_id INT NOT NULL,
   purchase_date datetime default current_timestamp,
 
-  PRIMARY KEY (user,book_id);
-)
+  PRIMARY KEY(user, book_id),
+  INDEX book_idx (book_id),
+  CONSTRAINT fk_user_myBooks FOREIGN KEY(user) REFERENCES user(email) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_book_myBooks FOREIGN KEY(book_id) REFERENCES books(book_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
   INSERT INTO books (`book_id`, `ISBN`, `title`, `author`, `price`, `page`, 'genre', `language`, 'publisher', 'posted_date') VALUES
   (1, 9791189015572, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425) ,
