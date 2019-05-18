@@ -54,14 +54,11 @@ CREATE TABLE IF NOT EXISTS myBooks (
 
 
   //mybooks를 통해 구매한 책이 있다면 num_sales 업데이트 해주기
-  DELIMITER //
-  CREATE TRIGGER tri_mybooks_ins_aft
-  AFTER INSERT
-  ON myBooks
-  FOR EACH ROW
-  BEGIN
-  UPDATE books
-  SET books.num_sales = books.num_sales+1
-  WHERE books.book_id = new.book_id
-  END //
-  DELIMITER;
+
+  delimiter |
+  CREATE TRIGGER tri_mybooks_ins_aft BEFORE INSERT ON myBooks
+  FOR EACH ROW BEGIN
+  UPDATE books SET books.num_sales = books.num_sales+1
+  WHERE books.book_id = new.book_id;
+  END;
+  |
