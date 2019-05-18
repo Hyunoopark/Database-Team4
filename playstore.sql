@@ -135,3 +135,10 @@ INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `lengt
 (3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
 (4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500);
 COMMIT;
+
+CREATE TABLE `wish_list` (
+  `user_id` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
+  `product_type` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+  `product_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+COMMIT;
