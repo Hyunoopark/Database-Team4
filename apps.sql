@@ -93,6 +93,12 @@ UPDATE `app`.`apps` SET `score_totalscore` = '196321914.8' WHERE (`app_id` = '6'
 UPDATE `app`.`apps` SET `score_totalscore` = '2316430.3' WHERE (`app_id` = '7');
 UPDATE `app`.`apps` SET `score_totalscore` = '30977.2' WHERE (`app_id` = '8');  
 UPDATE `app`.`apps` SET `score_totalscore` = '266226.4' WHERE (`app_id` = '9');
+               
+ALTER TABLE `app`.`apps` 
+ADD COLUMN `is_trialversion` TINYINT NULL DEFAULT 0 AFTER `score_totalscore`;
+
+               
+
 
 
 
