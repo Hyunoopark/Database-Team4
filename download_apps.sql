@@ -25,3 +25,9 @@ INSERT INTO `app`.`download_apps` (`email_id`, `app_id`, `date`, `paid_amount`, 
 INSERT INTO `app`.`download_apps` (`email_id`, `app_id`, `date`, `paid_amount`, `is_deleted`) VALUES ('21500172@handong.edu', '1', '2019-05-15', '0', '0');
 INSERT INTO `app`.`download_apps` (`email_id`, `app_id`, `date`, `paid_amount`, `is_deleted`) VALUES ('21500771@handong.edu', '1', '2019-05-15', '0', '0');
 INSERT INTO `app`.`download_apps` (`email_id`, `app_id`, `date`, `paid_amount`, `is_deleted`) VALUES ('21600301@handong.edu', '1', '2019-05-15', '0', '0');
+
+ALTER TABLE `app`.`download_apps` 
+ADD COLUMN `need_update` TINYINT NULL DEFAULT 0 AFTER `is_deleted`;
+               
+UPDATE `app`.`download_apps` SET `need_update` = '1' WHERE (`email_id` = '21600301@handong.edu') and (`app_id` = '3');
+
