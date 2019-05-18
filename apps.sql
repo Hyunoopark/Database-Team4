@@ -80,5 +80,19 @@ UPDATE `app`.`apps` SET `score_average` = '4.1', `score_total` = '564983' WHERE 
 UPDATE `app`.`apps` SET `score_average` = '4.3', `score_total` = '7204' WHERE (`app_id` = '8');
 UPDATE `app`.`apps` SET `score_average` = '4.4', `score_total` = '60506' WHERE (`app_id` = '9');
 
+ALTER TABLE `app`.`apps` 
+ADD COLUMN `score_totalscore` BIGINT NULL AFTER `score_totalnum`,
+CHANGE COLUMN `score_total` `score_totalnum` BIGINT(20) NULL DEFAULT NULL ;
+               
+UPDATE `app`.`apps` SET `score_totalscore` = '2434.6' WHERE (`app_id` = '1');
+UPDATE `app`.`apps` SET `score_totalscore` = '357069856.9' WHERE (`app_id` = '2');
+UPDATE `app`.`apps` SET `score_totalscore` = '367889391' WHERE (`app_id` = '3');
+UPDATE `app`.`apps` SET `score_totalscore` = '11891508' WHERE (`app_id` = '4');
+UPDATE `app`.`apps` SET `score_totalscore` = '1790747.4' WHERE (`app_id` = '5');
+UPDATE `app`.`apps` SET `score_totalscore` = '196321914.8' WHERE (`app_id` = '6');
+UPDATE `app`.`apps` SET `score_totalscore` = '2316430.3' WHERE (`app_id` = '7');
+UPDATE `app`.`apps` SET `score_totalscore` = '30977.2' WHERE (`app_id` = '8');  
+UPDATE `app`.`apps` SET `score_totalscore` = '266226.4' WHERE (`app_id` = '9');
+
 
 
