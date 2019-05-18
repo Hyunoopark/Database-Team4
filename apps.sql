@@ -63,5 +63,22 @@ UPDATE `app`.`apps` SET `sub_category` = 'Game' WHERE (`app_id` = '9');
 UPDATE `app`.`apps` SET `editors_choice_category` = 'Best app alltime' WHERE (`app_id` = '6');
 UPDATE `app`.`apps` SET `editors_choice_category` = 'Best game' WHERE (`app_id` = '9');
 
+ALTER TABLE `app`.`apps` 
+ADD COLUMN `score_average` DECIMAL(2,1) NULL AFTER `sub_category`,
+ADD COLUMN `score_total` BIGINT NULL AFTER `score_average`;
+               
+ALTER TABLE `app`.`apps` 
+DROP COLUMN `score`;
+               
+UPDATE `app`.`apps` SET `score_average` = '4.7', `score_total` = '518' WHERE (`app_id` = '1');
+UPDATE `app`.`apps` SET `score_average` = '4.1', `score_total` = '87090209' WHERE (`app_id` = '2');
+UPDATE `app`.`apps` SET `score_average` = '4.5', `score_total` = '81753198' WHERE (`app_id` = '3');
+UPDATE `app`.`apps` SET `score_average` = '4.3', `score_total` = '2765467' WHERE (`app_id` = '4');
+UPDATE `app`.`apps` SET `score_average` = '3.9', `score_total` = '459166' WHERE (`app_id` = '5');
+UPDATE `app`.`apps` SET `score_average` = '4.4', `score_total` = '44618617' WHERE (`app_id` = '6');
+UPDATE `app`.`apps` SET `score_average` = '4.1', `score_total` = '564983' WHERE (`app_id` = '7');
+UPDATE `app`.`apps` SET `score_average` = '4.3', `score_total` = '7204' WHERE (`app_id` = '8');
+UPDATE `app`.`apps` SET `score_average` = '4.4', `score_total` = '60506' WHERE (`app_id` = '9');
+
 
 
