@@ -64,7 +64,7 @@ UPDATE `app`.`apps` SET `editors_choice_category` = 'Best app alltime' WHERE (`a
 UPDATE `app`.`apps` SET `editors_choice_category` = 'Best game' WHERE (`app_id` = '9');
 
 ALTER TABLE `app`.`apps` 
-ADD COLUMN `score_average` DECIMAL(19,9) NULL AFTER `sub_category`,
+ADD COLUMN `score_average` DECIMAL(2,1) NULL AFTER `sub_category`,
 ADD COLUMN `score_total` BIGINT NULL AFTER `score_average`;
                
 ALTER TABLE `app`.`apps` 
