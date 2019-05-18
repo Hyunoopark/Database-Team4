@@ -91,6 +91,40 @@ CREATE TABLE IF NOT EXISTS myMovies (
   constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS personInMovie(
+	official_id INT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(30) UNIQUE,
+    role varchar(15)
+);
+
+INSERT INTO personInMovie(name, role) VALUES('Christopher Nolan','director'),
+('Jon watts','director'),
+('Anthony Russo','director'),
+('Joe Russo','director'),
+('임경택','director'),
+('Chris Columbus','director'),
+('Leonardo DiCaprio','actor'),
+('Chirs Hemsorth','actor'),
+('Scarlett Johansson','actor'),
+('Chris Evans','actor'),
+('Robert Downey Jr','actor'),
+('Tom Holland','actor'),
+('Christian Bale','actor'),
+('Heath Ledger','actor'),
+('Daniel Redcliffe','actor'),
+('Emma Watson','actor'),
+('Rupert Grint','actor'),
+('이시영','actor');
+
+CREATE TABLE  IF NOT EXISTS MoviePersonel(
+	official_id INT NOT NULL,
+   	 movie_id INT NOT NULL,
+    	PRIMARY KEY(official_id, movie_id),
+    	CONSTRAINT fk_offical FOREIGN KEY (official_id) REFERENCES personInMovie(official_id) on delete CASCADE on update CASCADE,
+    	CONSTRAINT fk_movie FOREIGN KEY (movie_id) REFERENCES movies(movie_id) on delete CASCADE on update CASCADE
+);
+
 /*
 CREATE TABLE IF NOT EXISTS wishList(
  user varchar(30) NOT NULL,
