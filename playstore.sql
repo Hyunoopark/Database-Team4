@@ -93,7 +93,7 @@ COMMIT;
 
 insert into product(product_type,product_id)value('movie', 10);
 
-/*add columns*/
+/*add columns in movie table*/
 ALTER TABLE movies ADD downloaded int default 0;
 
 ALTER TABLE movies ADD genre varchar(25);
@@ -114,24 +114,6 @@ WHERE movie_id = 4;
 
 UPDATE movies SET studio = 'CJ' 
 WHERE movie_id = 5;
-
-ALTER TABLE myMovies ADD rented tinyint(1) default 1;
-
-ALTER TABLE myMovies CHANGE expired_date expired_date datetime 
-default (now() + interval 30 day);
-
-UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
-WHERE movie_id = 1;
-
-UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
-WHERE movie_id = 2;
-
-UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
-WHERE movie_id = 3;
-
-UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
-WHERE movie_id = 4;
-
 /*create movie related tables*/
 
 CREATE TABLE IF NOT EXISTS myMovies ( 
@@ -157,6 +139,25 @@ INSERT INTO myMovies(user, movie_id) VALUES
 ('21500771@handong.edu', 2),
 ('21300333@handong.edu', 1);
 
+
+/*add cloumns in myMovies table*/
+
+ALTER TABLE myMovies ADD rented tinyint(1) default 1;
+
+ALTER TABLE myMovies CHANGE expired_date expired_date datetime 
+default (now() + interval 30 day);
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 1;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 2;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 3;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 4;
 
 CREATE TABLE IF NOT EXISTS personInMovie(
 	official_id INT AUTO_INCREMENT PRIMARY KEY,
