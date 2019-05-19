@@ -120,21 +120,6 @@ WHERE movie_id = 4;
 
 UPDATE movies SET studio = 'CJ' 
 WHERE movie_id = 5;
-/*create movie related tables*/
-
-
-CREATE TABLE IF NOT EXISTS myMovies ( 
-  user varchar(30) NOT NULL,
-  movie_id INT NOT NULL,
-  purchase_date datetime default current_timestamp,
-
-  PRIMARY KEY (user,movie_id),
-  INDEX movie_idx (movie_id),
-  constraint fk_user_mymovies foreign key (user) references user(email) on delete CASCADE on update CASCADE,
-  constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
-
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 INSERT INTO movies
 (movie_id, title,year,studio,language,length,age_limit,price,genre,oscar) VALUES
@@ -149,15 +134,52 @@ INSERT INTO movies
 (14,'Avengers:End Game','2019.4.12', 'marvel', 'English',142,'0', 2500,'action/adventure',0)
 ;
 
+/*create movie related tables*/
+
+CREATE TABLE IF NOT EXISTS myMovies ( 
+  user varchar(30) NOT NULL,
+  movie_id INT NOT NULL,
+  purchase_date datetime default current_timestamp,
+
+  PRIMARY KEY (user,movie_id),
+  INDEX movie_idx (movie_id),
+  constraint fk_user_mymovies foreign key (user) references user(email) on delete CASCADE on update CASCADE,
+  constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DELIMITER //
+CREATE TRIGGER downdloadedMv
+AFTER INSERT ON myMovies
+FOR EACH ROW 
+BEGIN
+ UPDATE movies SET downloaded = downloaded + 1
+ WHERE movie_id = NEW.movie_id;
+END;//
+
 INSERT INTO myMovies(user, movie_id) VALUES
+('21600301@handong.edu', 7),
+('21600301@handong.edu', 8),
 ('21600301@handong.edu', 1),
-('21600301@handong.edu', 2),
-('21600301@handong.edu', 3),
+('21600301@handong.edu', 5),
+('21600301@handong.edu', 11),
+('21600301@handong.edu', 12),
+('21600301@handong.edu', 13),
+('21500172@handong.edu', 11),
+('21500172@handong.edu', 12),
+('21500172@handong.edu', 14),
 ('21500172@handong.edu', 1),
-('21500172@handong.edu', 4),
+('21500172@handong.edu', 7),
+('21500771@handong.edu', 11),
+('21500771@handong.edu', 13),
 ('21500771@handong.edu', 1),
-('21500771@handong.edu', 2),
-('21300333@handong.edu', 1);
+('21500771@handong.edu', 7),
+('21500771@handong.edu', 8),
+('21300333@handong.edu', 11),
+('21300333@handong.edu', 12),
+('21300333@handong.edu', 13),
+('21300333@handong.edu', 1),
+('21300333@handong.edu', 5);
 
 
 /*add cloumns in myMovies table*/
@@ -202,7 +224,9 @@ INSERT INTO personInMovie(name, role) VALUES('Christopher Nolan','director'),
 ('Daniel Redcliffe','actor'),
 ('Emma Watson','actor'),
 ('Rupert Grint','actor'),
-('이시영','actor');
+('이시영','actor'),
+('emmma ston','actor'),
+('Ryan Gosling','actor');
 
 CREATE TABLE  IF NOT EXISTS MoviePersonel(
 	official_id INT NOT NULL,
@@ -213,17 +237,40 @@ CREATE TABLE  IF NOT EXISTS MoviePersonel(
 );
 
 INSERT INTO MoviePersonel(official_id, movie_id) 
-VALUES (1,4),
-(13,4);
-
-DELIMITER //
-CREATE TRIGGER downdloadedMv
-AFTER INSERT ON myMovies
-FOR EACH ROW 
-BEGIN
- UPDATE movies SET downloaded = downloaded + 1
- WHERE movie_id = NEW.movie_id;
-END;//
+VALUES (7,9),
+(7,10),
+(1,4),
+(1,9),
+(3,11),
+(3,12),
+(3,13),
+(3,14),
+(4,11),
+(4,12),
+(4,13),
+(4,14),
+(5,5),
+(8,11),
+(8,12),
+(8,13),
+(8,14),
+(9,11),
+(9,12),
+(9,13),
+(9,14),
+(10,11),
+(10,12),
+(10,13),
+(10,14),
+(11,11),
+(11,12),
+(11,13),
+(15,7),
+(15,8),
+(16,7),
+(16,8),
+(17,7),
+(17,8);
 
 /*
 CREATE TABLE IF NOT EXISTS wishList(
@@ -243,7 +290,7 @@ INSERT INTO user (email,password,name,birthday,nationality)VALUES('21600301@hand
 ('21500771@handong.edu','gkalswl', 'minjiha','1996.05.07','SouthKorea'),
 ('21300333@handong.edu','qkrgusdn', 'hyunwoopark','1994.03.01','USA'),
 ('21500172@handong.edu','rlacksrud', 'chankyungkim','1995.12.25','USA');
-
+/*
 INSERT INTO product(product_type, product_id)values('book',1),
 ('book',2),
 ('book',3),
@@ -253,7 +300,7 @@ INSERT INTO product(product_type, product_id)values('book',1),
 ('books',7),
 ('books',8),
 ('books',9);
-
+*/
 
 INSERT INTO books (book_id, product_id, ISBN, title, author, price, page, genre, language, publisher, posted_date) VALUES
   (1,1, 9791189015572, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425) ,
