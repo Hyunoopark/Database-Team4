@@ -25,6 +25,8 @@ CREATE TABLE `myBooks` (
   `purchase_date` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+SELECT title FROM books WHERE author LIKE '%Mur Lafferty%';
+
 INSERT INTO books (`ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
 (9791189015572, 5, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425, 0) ,
 (9788932966557, 6, 'Hollywood', 'Charles Bukowski', 9000, 486, 'Fiction / General', 'korean', 'Open books', 190503, 0),
