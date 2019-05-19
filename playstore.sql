@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS product(
   create_date datetime default current_timestamp,
 
   PRIMARY KEY (product_type, product_id),
-  UNIQUE INDEX (product_id)
 ); 
 
 CREATE TABLE IF NOT EXISTS apps(
@@ -123,6 +122,7 @@ UPDATE movies SET studio = 'CJ'
 WHERE movie_id = 5;
 /*create movie related tables*/
 
+
 CREATE TABLE IF NOT EXISTS myMovies ( 
   user varchar(30) NOT NULL,
   movie_id INT NOT NULL,
@@ -135,6 +135,19 @@ CREATE TABLE IF NOT EXISTS myMovies (
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+INSERT INTO movies
+(movie_id, title,year,studio,language,length,age_limit,price,genre,oscar) VALUES
+(6,'LALA LAND','2016.12.11', 'warner brothers', 'English',128,'12',2500,'drama',1),
+(7,'Harry Potter:magic stone','2001.11.12', 'warner brothers', 'English',152,'0', 1000,'adventure',0),
+(8,'Harry Potter:magician room','2002.12.12', 'warner brothers', 'English',160,'0', 1000,'adventure',0),
+(9,'Inception','2010.4.10', 'warner brothers', 'English',148,'0', 2500,'action',1),
+(10,'Greate Gatsby','2013.3.12', 'warner brothers', 'English',142,'0', 2500,'drama',1),
+(11,'Avengers','2012.4.12', 'marvel', 'English',142,'0', 2500,'action/adventure',0),
+(12,'Avengers:age of ultron','2015.4.12', 'marvel', 'English',141,'0', 2500,'action/adventure',0),
+(13,'Avengers:Infinity war','2018.4.12', 'marvel', 'English',149,'0', 2500,'action/adventure',0),
+(14,'Avengers:End Game','2019.4.12', 'marvel', 'English',142,'0', 2500,'action/adventure',0)
+;
 
 INSERT INTO myMovies(user, movie_id) VALUES
 ('21600301@handong.edu', 1),
