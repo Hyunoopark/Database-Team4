@@ -530,7 +530,8 @@ INSERT INTO 'developer' (`developer_id`, `password`, `first_name`, `last_name`, 
 
 INSERT INTO 'developer' (`developer_id`, `password`, `first_name`, `last_name`, `date_of_birth`, `website`, `email`, `address`, `company`) VALUES ('8', 'bads2442', 'Johannes', 'Vuorinen', '1981-07-24', 'http://frogmind.com/author/johannes-vuorinen/', 'brawl@frogmind.com', 'Kansakoulukatu 5A 3A 00100 Helsinki Finland', 'Frogmind');
 
-
+ALTER TABLE `developer` 
+RENAME TO  `developers` ; 
 -- --------------------------------------------------------
 
 --
