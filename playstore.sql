@@ -20,7 +20,9 @@ CREATE TABLE IF NOT EXISTS product(
   product_id int not null,
   create_date datetime default current_timestamp,
 
+  INDEX product_idx (product_id),
   PRIMARY KEY (product_type, product_id),
+  
 ); 
 
 CREATE TABLE IF NOT EXISTS apps(
