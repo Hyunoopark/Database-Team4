@@ -130,29 +130,82 @@ ADD COLUMN `is_trialversion` TINYINT NULL DEFAULT 0 AFTER `score_totalscore`;
 --
 
 CREATE TABLE `books` (
-  `book_id` int(11) NOT NULL,
-  `ISBN` bigint(20) NOT NULL,
+  `book_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ISBN` bigint(20) DEFAULT NULL,
   `product_id` int(11) DEFAULT NULL,
   `title` varchar(40) NOT NULL,
   `author` varchar(30) NOT NULL,
-  `price` int(11) NOT NULL,
+  `price` int(11) DEFAULT 0,
   `page` int(11) NOT NULL,
   `genre` varchar(50) NOT NULL,
   `language` varchar(30) NOT NULL,
   `publisher` varchar(40) NOT NULL,
   `posted_date` date NOT NULL,
-  `num_sales` bigint(20) NOT NULL
+  `num_sales` bigint(20) NOT NULL,
+
+  PRIMARY KEY(`book_id`)
 );
+
+ALTER TABLE `books`
+ADD COLUMN `weekly_recommended` VARCHAR(45) NULL DEFAULT 0 AFTER `num_sales`;
+
+--trigger for number of sales each book
+delimiter |
+CREATE TRIGGER tri_mybooks_ins_aft BEFORE INSERT ON myBooks
+FOR EACH ROW BEGIN
+UPDATE books SET books.num_sales = books.num_sales+1
+WHERE books.book_id = new.book_id;
+END;
+|
 
 --
 -- 테이블의 덤프 데이터 `books`
 --
 
-INSERT INTO books (`book_id`, `ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
-(1, 9791189015572, 5, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425, 0) ,
-(2, 9788932966557, 6, 'Hollywood', 'Charles Bukowski', 9000, 486, 'Fiction / General', 'korean', 'Open books', 190503, 0),
-(3, 9788934995005, 7, 'Fact Ful Nes', 'Hans Rosling', 11880, 572, 'Literary Collections / Essays Philosophy / General', 'korean', 'Co. kimyong', 190228, 0),
-(4, 9791164130801, 8, 'Bad Blood', 'John Carreyrou', 10080, 468, 'Business & Economics / General', 'korean', 'Wiseberry', 190415, 0);
+INSERT INTO books (`ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
+(9791189015572, 5, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425, 0) ,
+(9788932966557, 6, 'Hollywood', 'Charles Bukowski', 9000, 486, 'Fiction / General', 'korean', 'Open books', 190503, 0),
+(9788934995005, 7, 'Fact Ful Nes', 'Hans Rosling', 11880, 572, 'Literary Collections / Essays Philosophy / General', 'korean', 'Co. kimyong', 190228, 0),
+(9791164130801, 8, 'Bad Blood', 'John Carreyrou', 10080, 468, 'Business & Economics / General', 'korean', 'Wiseberry', 190415, 0);
+
+INSERT INTO books (`ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
+(9791126534159, 9, 'Figering in bed', '계바비', 3150, 425, 'Fiction / Romance / General', 'korean', 'Donga', 190111, 0),
+(null, null, '황제의 검', '임무성', 0, 220, 'Fiction / Action & Adventure', 'korean', '환상북스', 120425, 0);
+
+-- Query
+
+UPDATE `books` SET `weekly_recommended` = '1' WHERE (`book_id` = '3');
+-- a recommended book of this week
+
+SELECT title, author FROM books WHERE genre LIKE "%Fiction%";
+-- Searching for Fiction Genres
+
+SELECT title, author FROM books ORDER BY posted_date DESC limit 30;
+--  Newly released books can be listed to users.
+
+SELECT title, author FROM books WHERE genre LIKE "%Fiction%" ORDER BY posted_date DESC limit 30;
+-- Newly released books can be listed to users only Fiction
+
+SELECT title, author FROM books WHERE NOT genre LIKE '%Fiction%' ORDER BY posted_date DESC limit 30;
+-- ewly released books can be listed to users except Fiction
+
+SELECT title, author FROM books WHERE weekly_recommended = '1';
+-- List by weekly_recommended
+
+SELECT title, author FROM books ORDER BY num_sales DESC limit 30;
+-- List by in the highest order of sale
+
+SELECT title, author FROM books WHERE price = 0 ORDER BY num_sales DESC limit 30;
+-- List by the highest number of books with free prices
+
+SELECT * FROM books WHERE books.title = 'Hollywood';
+-- When one book is chosen, the detailed information of the book is shown.
+
+SELECT title, author
+FROM myBooks, books
+WHERE myBooks.book_id = books.book_id
+AND myBooks.user = '21300333@handong.edu';
+-- Book can be sold and it is stored in MyBooks storage of a user who bought it.
 
 -- --------------------------------------------------------
 
@@ -547,6 +600,9 @@ CREATE TABLE IF NOT EXISTS paymentMethod(
   PRIMARY KEY(paymentType, serialNum)
 );
 
+INSERT INTO `paymentMethod` (`serialNum`, `paymentType`) VALUES ('1234567887654321', 'CreditCard');
+
+
 -- --------------------------------------------------------
 
 --
@@ -678,6 +734,8 @@ ALTER TABLE `myMovies`
   ADD CONSTRAINT `fk_book_myMovies` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_user_myMovies` FOREIGN KEY (`user`) REFERENCES `users` (`email`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
