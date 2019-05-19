@@ -102,7 +102,7 @@ ADD COLUMN `is_trialversion` TINYINT NULL DEFAULT 0 AFTER `score_totalscore`;
 
 INSERT INTO `apps` (`app_id`, `app_name`, `description`, `developer_id`, `url`, `price`, `downloaded_num`, `uploaded_date`, `latest_update`, `rating`, `current_version`, `num_of_reports`, `required_software`, `size`, `editors_choice`, `coming_soon`, `weekly_recommended`, `genre`, `score_average`, `score_totalnum`, `score_totalscore`, `is_trialversion`) VALUES ('10', 'BadApp', 'Badapp for test', '8', 'https://play.google.com/store/apps/details?id=badapp', 'FREE', '101', '2019-05-16', '2019-05-16', 'R', '0.0.0', '12', 'Varies with devices', 'Varies with devices', '0', '0', '0', 'Reported', '1', '3', '3', '0');
              
-UPDATE `app`.`apps` SET `price` = '\\100000' WHERE (`app_id` = '10');
+UPDATE `apps` SET `price` = '\\100000' WHERE (`app_id` = '10');
 
 
 
