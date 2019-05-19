@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS product(
   create_date datetime default current_timestamp,
 
   INDEX product_idx (product_id),
-  PRIMARY KEY (product_type, product_id),
+  PRIMARY KEY (product_type, product_id)
   
 ); 
 
