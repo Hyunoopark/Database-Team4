@@ -18,3 +18,12 @@ ALTER TABLE `app`.`comments_apps`
 CHANGE COLUMN `score` `score` INT(1) NOT NULL ;
                
 INSERT INTO `app`.`comments_apps` (`comment_id`, `app_id`, `comment_contents`, `score`, `commented_date`, `num_of_likes`, `user_id`) VALUES ('5', '1', 'why no Arabic version of this bible ... Egyptian Arabic* it used to have before...', '3', '2019-04-17 00:00:00', '0', '27');
+
+ALTER TABLE `comments_apps` 
+CHANGE COLUMN `user_id` `email_id` VARCHAR(30) NOT NULL ;
+               
+UPDATE `comments_apps` SET `email_id` = 'googleuser@gmail.com' WHERE (`comment_id` = '1') and (`email_id` = '23');
+UPDATE `comments_apps` SET `email_id` = 'mulia@gmail.com' WHERE (`comment_id` = '2') and (`email_id` = '24');
+UPDATE `comments_apps` SET `email_id` = 'sean@gmail.com' WHERE (`comment_id` = '4') and (`email_id` = '26');
+UPDATE `comments_apps` SET `email_id` = 'mari@gmailcom' WHERE (`comment_id` = '3') and (`email_id` = '25');
+

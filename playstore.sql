@@ -1,3 +1,5 @@
+USE playstore;
+
 CREATE TABLE IF NOT EXISTS user (
   email varchar(30) NOT NULL,
   password varchar(30) NOT NULL,
@@ -46,6 +48,7 @@ CREATE TABLE IF NOT EXISTS apps(
   weekly_recommended VARCHAR(45) NULL DEFAULT 0,
 
   foreign key (product_id) references product(product_id)on delete set null on update cascade
+
 )DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS books(
@@ -69,7 +72,6 @@ CREATE TABLE IF NOT EXISTS books(
 
 CREATE TABLE IF NOT EXISTS movies ( 
   movie_id INT NOT NULL AUTO_INCREMENT,
-  product_id INT,
   title VARCHAR(40) NOT NULL,
   year DATE NOT NULL,
   language VARCHAR(30) NOT NULL,
@@ -82,16 +84,21 @@ CREATE TABLE IF NOT EXISTS movies (
   foreign key (product_id) references product(product_id) on delete set null on update cascade
 );
 
+DELIMITER //
+CREATE TRIGGER addProduct
+BEFORE INSERT ON movies
+FOR EACH ROW 
+BEGIN
+ INSERT INTO product(product_type, product_id) values ('movie', new.movie_id);
+END;//
 
-INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES 
-(1, 6,'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
-(2, 7,'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
-(3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
-(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500)
-(5,10,'언니','2019.1.15', 'korean', 93, 18, null, 2500 );
+INSERT INTO movies (`movie_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES 
+(1, 'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
+(2, 'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
+(3, 'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
+(4, 'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500)
+(5, '언니','2019.1.15', 'korean', 93, 18, null, 2500 );
 COMMIT;
-
-insert into product(product_type,product_id)value('movie', 10);
 
 /*add columns in movie table*/
 ALTER TABLE movies ADD downloaded int default 0;
