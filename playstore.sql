@@ -87,8 +87,11 @@ INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `lengt
 (1, 6,'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
 (2, 7,'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
 (3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
-(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500);
+(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500)
+(5,10,'언니','2019.1.15', 'korean', 93, 18, null, 2500 );
 COMMIT;
+
+insert into product(product_type,product_id)value('movie', 10);
 
 /*add columns*/
 ALTER TABLE movies ADD downloaded int default 0;
