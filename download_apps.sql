@@ -31,3 +31,4 @@ ADD COLUMN `need_update` TINYINT NULL DEFAULT 0 AFTER `is_deleted`;
                
 UPDATE `app`.`download_apps` SET `need_update` = '1' WHERE (`email_id` = '21600301@handong.edu') and (`app_id` = '3');
 
+DELETE FROM `download_apps` WHERE (`email_id` = '21500771@handong.edu') and (`app_id` = '1');
