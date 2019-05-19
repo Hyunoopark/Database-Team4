@@ -132,7 +132,6 @@ ADD COLUMN `is_trialversion` TINYINT NULL DEFAULT 0 AFTER `score_totalscore`;
 CREATE TABLE `books` (
   `book_id` int(11) NOT NULL AUTO_INCREMENT,
   `ISBN` bigint(20) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
   `title` varchar(40) NOT NULL,
   `author` varchar(30) NOT NULL,
   `price` int(11) DEFAULT 0,
@@ -158,54 +157,28 @@ WHERE books.book_id = new.book_id;
 END;
 |
 
+DELIMITER //
+CREATE TRIGGER addProduct
+BEFORE INSERT ON books
+FOR EACH ROW
+BEGIN
+ INSERT INTO product(product_type, product_id) values ('book', new.book_id);
+END;//
+
 --
 -- 테이블의 덤프 데이터 `books`
 --
 
-INSERT INTO books (`ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
-(9791189015572, 5, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425, 0) ,
-(9788932966557, 6, 'Hollywood', 'Charles Bukowski', 9000, 486, 'Fiction / General', 'korean', 'Open books', 190503, 0),
-(9788934995005, 7, 'Fact Ful Nes', 'Hans Rosling', 11880, 572, 'Literary Collections / Essays Philosophy / General', 'korean', 'Co. kimyong', 190228, 0),
-(9791164130801, 8, 'Bad Blood', 'John Carreyrou', 10080, 468, 'Business & Economics / General', 'korean', 'Wiseberry', 190415, 0);
+INSERT INTO books (`ISBN`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
+(9791189015572, 'Six wakes', 'Mur Lafferty', 9900 , 648, 'Fiction / Science Fiction / General', 'korean', 'Kyobobook MCP', 190425, 0) ,
+(9788932966557, 'Hollywood', 'Charles Bukowski', 9000, 486, 'Fiction / General', 'korean', 'Open books', 190503, 0),
+(9788934995005, 'Fact Ful Nes', 'Hans Rosling', 11880, 572, 'Literary Collections / Essays Philosophy / General', 'korean', 'Co. kimyong', 190228, 0),
+(9791164130801, 'Bad Blood', 'John Carreyrou', 10080, 468, 'Business & Economics / General', 'korean', 'Wiseberry', 190415, 0);
 
-INSERT INTO books (`ISBN`, `product_id`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
-(9791126534159, 9, 'Figering in bed', '계바비', 3150, 425, 'Fiction / Romance / General', 'korean', 'Donga', 190111, 0),
-(null, null, '황제의 검', '임무성', 0, 220, 'Fiction / Action & Adventure', 'korean', '환상북스', 120425, 0);
+INSERT INTO books (`ISBN`, `title`, `author`, `price`, `page`, `genre`, `language`, `publisher`, `posted_date`, `num_sales`) VALUES
+(9791126534159, 'Figering in bed', '계바비', 3150, 425, 'Fiction / Romance / General', 'korean', 'Donga', 190111, 0),
+(null, '황제의 검', '임무성', 0, 220, 'Fiction / Action & Adventure', 'korean', '환상북스', 120425, 0);
 
--- Query
-
-UPDATE `books` SET `weekly_recommended` = '1' WHERE (`book_id` = '3');
--- a recommended book of this week
-
-SELECT title, author FROM books WHERE genre LIKE "%Fiction%";
--- Searching for Fiction Genres
-
-SELECT title, author FROM books ORDER BY posted_date DESC limit 30;
---  Newly released books can be listed to users.
-
-SELECT title, author FROM books WHERE genre LIKE "%Fiction%" ORDER BY posted_date DESC limit 30;
--- Newly released books can be listed to users only Fiction
-
-SELECT title, author FROM books WHERE NOT genre LIKE '%Fiction%' ORDER BY posted_date DESC limit 30;
--- ewly released books can be listed to users except Fiction
-
-SELECT title, author FROM books WHERE weekly_recommended = '1';
--- List by weekly_recommended
-
-SELECT title, author FROM books ORDER BY num_sales DESC limit 30;
--- List by in the highest order of sale
-
-SELECT title, author FROM books WHERE price = 0 ORDER BY num_sales DESC limit 30;
--- List by the highest number of books with free prices
-
-SELECT * FROM books WHERE books.title = 'Hollywood';
--- When one book is chosen, the detailed information of the book is shown.
-
-SELECT title, author
-FROM myBooks, books
-WHERE myBooks.book_id = books.book_id
-AND myBooks.user = '21300333@handong.edu';
--- Book can be sold and it is stored in MyBooks storage of a user who bought it.
 
 -- --------------------------------------------------------
 
@@ -213,28 +186,73 @@ AND myBooks.user = '21300333@handong.edu';
 -- 테이블 구조 `movies`
 --
 
-CREATE TABLE `movies` (
-  `movie_id` int(11) NOT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `title` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
-  `year` date NOT NULL,
-  `language` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
-  `length` int(11) NOT NULL,
-  `age_limit` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
-  `subtitle` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `price` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE IF NOT EXISTS movies (
+  movie_id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(40) NOT NULL,
+  year DATE NOT NULL,
+  language VARCHAR(30) NOT NULL,
+  length  INT NOT NULL,
+  age_limit VARCHAR(30) NOT NULL,
+  subtitle VARCHAR(100) NULL,
+  price INT NOT NULL,
+
+  PRIMARY KEY (movie_id),
+  foreign key (product_id) references product(product_id) on delete set null on update cascade
+);
+
+DELIMITER //
+CREATE TRIGGER addProduct
+BEFORE INSERT ON movies
+FOR EACH ROW
+BEGIN
+ INSERT INTO product(product_type, product_id) values ('movie', new.movie_id);
+END;//
+
+/*add columns in movie table*/
+ALTER TABLE movies ADD downloaded int default 0;
+
+ALTER TABLE movies ADD genre varchar(25);
+UPDATE movies SET genre = 'action'
+WHERE movie_id = 3 OR movie_id = 4 OR movie_id = 5;
+
+ALTER TABLE movies ADD oscar TINYINT(1) DEFAULT 0;
+
+ALTER TABLE movies ADD studio VARCHAR(20) default 'unknown' AFTER year;
+UPDATE movies SET studio = 'disney'
+WHERE movie_id = 1 OR movie_id = 2;
+
+UPDATE movies SET studio = 'marvel'
+WHERE movie_id = 3;
+
+UPDATE movies SET studio = 'warner brothers'
+WHERE movie_id = 4;
+
+UPDATE movies SET studio = 'CJ'
+WHERE movie_id = 5;
 
 --
 -- 테이블의 덤프 데이터 `movies`
 --
 
-INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES
-(1, 6,'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
-(2, 7,'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
-(3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
-(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500)
-(5,10,'언니','2019.1.15', 'korean', 93, 18, null, 2500 );
+INSERT INTO movies (`movie_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES
+(1, 'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
+(2, 'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
+(3, 'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
+(4, 'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500)
+(5, '언니','2019.1.15', 'korean', 93, 18, null, 2500 );
+
+INSERT INTO movies
+(movie_id, title,year,studio,language,length,age_limit,price,genre,oscar) VALUES
+(6,'LALA LAND','2016.12.11', 'warner brothers', 'English',128,'12',2500,'drama',1),
+(7,'Harry Potter:magic stone','2001.11.12', 'warner brothers', 'English',152,'0', 1000,'adventure',0),
+(8,'Harry Potter:magician room','2002.12.12', 'warner brothers', 'English',160,'0', 1000,'adventure',0),
+(9,'Inception','2010.4.10', 'warner brothers', 'English',148,'0', 2500,'action',1),
+(10,'Greate Gatsby','2013.3.12', 'warner brothers', 'English',142,'0', 2500,'drama',1),
+(11,'Avengers','2012.4.12', 'marvel', 'English',142,'0', 2500,'action/adventure',0),
+(12,'Avengers:age of ultron','2015.4.12', 'marvel', 'English',141,'0', 2500,'action/adventure',0),
+(13,'Avengers:Infinity war','2018.4.12', 'marvel', 'English',149,'0', 2500,'action/adventure',0),
+(14,'Avengers:End Game','2019.4.12', 'marvel', 'English',142,'0', 2500,'action/adventure',0)
+;
 
 -- --------------------------------------------------------
 
@@ -366,25 +384,166 @@ INSERT INTO myBooks(user, book_id) VALUES
 -- 테이블 구조 `myMovies`
 --
 
-CREATE TABLE `myMovies` (
-  `user` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
-  `movie_id` int(11) NOT NULL,
-  `purchase_date` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*create movie related tables*/
+
+CREATE TABLE IF NOT EXISTS myMovies (
+  user varchar(30) NOT NULL,
+  movie_id INT NOT NULL,
+  purchase_date datetime default current_timestamp,
+
+  PRIMARY KEY (user,movie_id),
+  INDEX movie_idx (movie_id),
+  constraint fk_user_mymovies foreign key (user) references user(email) on delete CASCADE on update CASCADE,
+  constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DELIMITER //
+CREATE TRIGGER downdloadedMv
+AFTER INSERT ON myMovies
+FOR EACH ROW
+BEGIN
+ UPDATE movies SET downloaded = downloaded + 1
+ WHERE movie_id = NEW.movie_id;
+END;//
+
+/*add cloumns in myMovies table*/
+
+ALTER TABLE myMovies ADD rented tinyint(1) default 1;
+
+ALTER TABLE myMovies CHANGE expired_date expired_date datetime
+default (now() + interval 30 day);
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 1;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 2;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 3;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 4;
 
 --
 -- 테이블의 덤프 데이터 `myMovies`
 --
 
 INSERT INTO myMovies(user, movie_id) VALUES
+('21600301@handong.edu', 7),
+('21600301@handong.edu', 8),
 ('21600301@handong.edu', 1),
-('21600301@handong.edu', 2),
-('21600301@handong.edu', 3),
+('21600301@handong.edu', 5),
+('21600301@handong.edu', 11),
+('21600301@handong.edu', 12),
+('21600301@handong.edu', 13),
+('21500172@handong.edu', 11),
+('21500172@handong.edu', 12),
+('21500172@handong.edu', 14),
 ('21500172@handong.edu', 1),
-('21500172@handong.edu', 4),
+('21500172@handong.edu', 7),
+('21500771@handong.edu', 11),
+('21500771@handong.edu', 13),
 ('21500771@handong.edu', 1),
-('21500771@handong.edu', 2),
-('21300333@handong.edu', 1);
+('21500771@handong.edu', 7),
+('21500771@handong.edu', 8),
+('21300333@handong.edu', 11),
+('21300333@handong.edu', 12),
+('21300333@handong.edu', 13),
+('21300333@handong.edu', 1),
+('21300333@handong.edu', 5);
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `personInMovie`
+--
+
+CREATE TABLE IF NOT EXISTS personInMovie(
+	official_id INT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(30) UNIQUE,
+    role varchar(15)
+);
+
+--
+-- 테이블의 덤프 데이터 `personInMovie`
+--
+
+INSERT INTO personInMovie(name, role) VALUES('Christopher Nolan','director'),
+('Jon watts','director'),
+('Anthony Russo','director'),
+('Joe Russo','director'),
+('임경택','director'),
+('Chris Columbus','director'),
+('Leonardo DiCaprio','actor'),
+('Chirs Hemsorth','actor'),
+('Scarlett Johansson','actor'),
+('Chris Evans','actor'),
+('Robert Downey Jr','actor'),
+('Tom Holland','actor'),
+('Christian Bale','actor'),
+('Heath Ledger','actor'),
+('Daniel Redcliffe','actor'),
+('Emma Watson','actor'),
+('Rupert Grint','actor'),
+('이시영','actor'),
+('emmma ston','actor'),
+('Ryan Gosling','actor');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `MoviePersonel`
+--
+
+CREATE TABLE  IF NOT EXISTS MoviePersonel(
+	official_id INT NOT NULL,
+   	 movie_id INT NOT NULL,
+    	PRIMARY KEY(official_id, movie_id),
+    	CONSTRAINT fk_offical FOREIGN KEY (official_id) REFERENCES personInMovie(official_id) on delete CASCADE on update CASCADE,
+    	CONSTRAINT fk_movie FOREIGN KEY (movie_id) REFERENCES movies(movie_id) on delete CASCADE on update CASCADE
+);
+
+--
+-- 테이블의 덤프 데이터 `MoviePersonel`
+--
+
+INSERT INTO MoviePersonel(official_id, movie_id)
+VALUES (7,9),
+(7,10),
+(1,4),
+(1,9),
+(3,11),
+(3,12),
+(3,13),
+(3,14),
+(4,11),
+(4,12),
+(4,13),
+(4,14),
+(5,5),
+(8,11),
+(8,12),
+(8,13),
+(8,14),
+(9,11),
+(9,12),
+(9,13),
+(9,14),
+(10,11),
+(10,12),
+(10,13),
+(10,14),
+(11,11),
+(11,12),
+(11,13),
+(15,7),
+(15,8),
+(16,7),
+(16,8),
+(17,7),
+(17,8);
 
 -- --------------------------------------------------------
 
@@ -449,19 +608,6 @@ CREATE TABLE `products` (
   `create_date` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- 테이블의 덤프 데이터 `product`
---
-
-INSERT INTO product(product_type, product_id)values('book',1),
-('book',2),
-('book',3),
-('book',4),
-('app',5),
-('books',6),
-('books',7),
-('books',8),
-('books',9);
 
 -- --------------------------------------------------------
 
@@ -734,6 +880,266 @@ ALTER TABLE `myMovies`
   ADD CONSTRAINT `fk_book_myMovies` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_user_myMovies` FOREIGN KEY (`user`) REFERENCES `users` (`email`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
+
+--
+-- 'Apps' Query
+--
+
+SELECT * FROM apps WHERE genre like '%Social%';
+-- List by genre (choose a specific genre which the user wants to see)
+
+SELECT * FROM apps WHERE price = 'FREE';
+-- List by price (choose a certain price which the user wants to see)
+
+UPDATE apps SET `weekly_recommended` = '1' WHERE (`app_id` = '9');
+-- Choose an app to be weekly recommended list. (decided by admin)
+
+SELECT * FROM apps WHERE weekly_recommended = '1';
+-- List by weekly_recommended (user can see the list of apps which are under the weekly recommended list)
+
+SELECT * FROM apps WHERE app_name like '%Bible%';
+-- Apps can be searched by using keywords (searched by user)
+
+SELECT app_name FROM apps WHERE uploaded_date >= '2019-05-01' AND uploaded_date <= '2019-05-31';
+-- Apps are listed under newly released app section depending on the uploaded date.
+
+SELECT * FROM apps WHERE downloaded_num > '100000000';
+-- Apps can be listed based on the number sold.
+
+SELECT app_name,company FROM apps LEFT JOIN developers ON apps.developer_id = developers.developer_id WHERE developers.company = 'Handong Global University';
+-- Apps can be listed by the producing company.
+
+SELECT * FROM apps WHERE score_average > '4.5';
+-- Apps can be listed by rating.
+
+SELECT * FROM apps WHERE downloaded_num > '100' && price = 'FREE' && sub_category = 'Game';
+-- Apps can be listed by top free games.
+
+SELECT * FROM apps WHERE price <> 'FREE';
+-- Apps can be listed by paid apps.
+
+SELECT * FROM apps WHERE editors_choice = '1' && editors_choice_category = 'Best Game';
+-- Apps can be listed by Editor’s Choice list under specific category.
+
+SELECT * FROM apps WHERE coming_soon = '1';
+-- Apps can be listed by coming soon list.
+
+SELECT * FROM apps WHERE weekly_recommended = '1';
+-- Apps can be listed by weekly recommended list.
+
+SELECT apps.app_id, app_name,user_id, comment_contents, comments_apps.score, commented_date, num_of_likes  FROM apps LEFT JOIN comments_apps ON apps.app_id = comments_apps.app_id WHERE comment_id > 0;
+-- When the detail of an app is shown, all the comments related are shown
+
+SELECT apps.app_id, app_name,user_id, comment_contents, comments_apps.score, commented_date, num_of_likes  FROM apps LEFT JOIN comments_apps ON apps.app_id = comments_apps.app_id WHERE comment_id > 0 ORDER BY num_of_likes DESC ;
+-- Comments can be listed depending on the number of likes.
+
+SELECT apps.app_id, app_name,user_id, comment_contents, comments_apps.score, commented_date, num_of_likes  FROM apps LEFT JOIN comments_apps ON apps.app_id = comments_apps.app_id WHERE comment_id > 0 ORDER BY score DESC ;
+-- Comments can be listed depending on the score which the user has given. From high to low.
+
+SELECT apps.app_id, app_name,user_id, comment_contents, comments_apps.score, commented_date, num_of_likes  FROM apps LEFT JOIN comments_apps ON apps.app_id = comments_apps.app_id WHERE comment_id > 0 ORDER BY score ASC ;
+-- Comments can be listed depending on the score which the user has given. From low to high.
+
+SELECT apps.app_id, app_name FROM (SELECT download_apps.app_id, COUNT(*) FROM download_apps WHERE date = '2019-05-18' GROUP BY app_id ORDER BY COUNT(*) DESC) AS dt_c, apps WHERE dt_c.app_id = apps.app_id;
+-- Apps can be listed by top recently download.
+
+SELECT app_id, app_name, downloaded_num FROM apps WHERE app_id = '1';
+
+DELIMITER //
+  CREATE TRIGGER downloadapps
+  AFTER INSERT ON download_apps
+  FOR EACH ROW
+  BEGIN
+ 	  UPDATE apps SET downloaded_num = downloaded_num + 1
+ 	  WHERE app_id = NEW.app_id;
+  END;//
+DELIMITER ;
+
+INSERT INTO `download_apps` (`email_id`, `app_id`, `date`, `paid_amount`, `is_deleted`, `need_update`) VALUES ('21500771@handong.edu', '1', '2019-05-15', '0', '0', '0');
+
+SELECT app_id, app_name, downloaded_num FROM apps WHERE app_id = '1';
+-- Increment the number of downloaded_num if someone buys the app.
+
+SELECT download_apps.email_id, app_id, is_deleted FROM download_apps WHERE email_id = '21600301@handong.edu';
+UPDATE download_apps SET `is_deleted` = '1' WHERE (`email_id` = '21600301@handong.edu') and (`app_id` = '9');
+--User deletes an app.
+
+SELECT email_id, apps.app_id, app_name FROM download_apps LEFT JOIN apps ON download_apps.app_id = apps.app_id WHERE email_id = '21600301@handong.edu';
+-- List all the apps that user had installed.
+
+SELECT email_id, apps.app_id, app_name FROM download_apps LEFT JOIN apps ON download_apps.app_id = apps.app_id WHERE email_id = '21600301@handong.edu' && is_deleted = '0';
+-- List all the apps which is currently installed.
+
+SELECT email_id, apps.app_id, app_name FROM app.download_apps LEFT JOIN apps ON download_apps.app_id = apps.app_id WHERE email_id = '21600301@handong.edu' && is_deleted = '1';
+-- List all the apps which user had deleted. (previously installed)
+
+SELECT email_id, app_name, need_update FROM download_apps LEFT JOIN apps ON download_apps.app_id = apps.app_id WHERE email_id = '21600301@handong.edu' && need_update = '1';
+-- User can check if he/she needs an update.
+
+SELECT app_id, app_name, score_average, score_totalscore, score_totalnum FROM apps WHERE app_id = '1';
+
+DELIMITER //
+  CREATE TRIGGER commentapps
+  AFTER INSERT ON app.comments_apps
+  FOR EACH ROW
+  BEGIN
+  UPDATE apps SET score_totalnum = score_totalnum  + 1
+  WHERE app_id = NEW.app_id;
+  UPDATE apps SET score_totalscore = score_totalscore + NEW.score
+  WHERE app_id = NEW.app_id;
+  UPDATE apps SET score_average = score_totalscore / score_totalnum
+  WHERE app_id = NEW.app_id;
+  END;//
+DELIMITER ;
+
+INSERT INTO `comments_apps` (`comment_id`, `app_id`, `comment_contents`, `score`, `commented_date`, `num_of_likes`, `email_id`) VALUES ('5', '1', 'why no Arabic version of this bible ... Egyptian Arabic* it used to have before...', '3', '2019-04-17 00:00:00', '0', 'sammy@gmail.com');
+-- User leaves comment and gives score on the app.
+
+SELECT * FROM apps WHERE is_trialversion = '1';
+-- User can see the list of apps which are out as trial versions.
+
+SELECT * FROM apps WHERE num_of_reports > '10';
+-- List apps which has more than 10 reports.
+
+--
+-- 'Books' Query
+--
+UPDATE `books` SET `weekly_recommended` = '1' WHERE (`book_id` = '3');
+-- a recommended book of this week
+
+SELECT title, author FROM books WHERE genre LIKE "%Fiction%";
+-- Searching for Fiction Genres
+
+SELECT title, author FROM books ORDER BY posted_date DESC limit 30;
+--  Newly released books can be listed to users.
+
+SELECT title, author FROM books WHERE genre LIKE "%Fiction%" ORDER BY posted_date DESC limit 30;
+-- Newly released books can be listed to users only Fiction
+
+SELECT title, author FROM books WHERE NOT genre LIKE '%Fiction%' ORDER BY posted_date DESC limit 30;
+-- ewly released books can be listed to users except Fiction
+
+SELECT title, author FROM books WHERE weekly_recommended = '1';
+-- List by weekly_recommended
+
+SELECT title, author FROM books ORDER BY num_sales DESC limit 30;
+-- List by in the highest order of sale
+
+SELECT title, author FROM books WHERE price = 0 ORDER BY num_sales DESC limit 30;
+-- List by the highest number of books with free prices
+
+SELECT * FROM books WHERE books.title = 'Hollywood';
+-- When one book is chosen, the detailed information of the book is shown.
+
+SELECT title, author
+FROM myBooks, books
+WHERE myBooks.book_id = books.book_id
+AND myBooks.user = '21300333@handong.edu';
+-- Book can be sold and it is stored in MyBooks storage of a user who bought it.
+
+--
+-- 'Movies' Query
+--
+SELECT title,year, downloaded FROM movies ORDER BY downloaded DESC;
+-- Movies can be listed by popularity(Ranking).
+
+SELECT title, price
+FROM movies
+WHERE year BETWEEN NOW() - INTERVAL 365 DAY AND NOW();
+-- Newly released movies can be listed to users.(in a year)
+
+SELECT title, year FROM movies WHERE genre LIKE '%action%';
+-- Movies can be listed by a specific genre.
+
+SELECT title,year, downloaded, genre
+FROM movies
+WHERE genre LIKE '%action%'
+ORDER BY downloaded DESC;
+-- popular movies under specific genre can be shown
+
+SELECT title, genre, price FROM movies WHERE price = 1000;
+-- Searching for Prices
+
+SELECT title,year, genre, price
+  FROM movies
+  WHERE genre LIKE '%action%'
+  OR genre LIKE ‘%adventure%’
+  AND oscar = ‘1’
+  ORDER BY downloaded DESC;
+-- Movies ,which have once won the Oscar, under action fiction(genre)
+
+SELECT title,year, genre, price
+  FROM movies
+  WHERE genre LIKE '%action%'
+  OR genre LIKE '%action%'
+  LIMIT 6;
+-- Six movies are shown at once when firstly listed.
+
+SELECT * FROM movies WHERE movies.title = '언니';
+-- When one movie is chosen, the detailed information of the movie is shown.
+
+SELECT title,year
+  FROM myMovies, movies
+  WHERE myMovies.movie_id = movies.movie_id
+  AND myMovies.user = '21600301@handong.edu';
+-- Movie can be sold and it is stored in MyMovies storage of a user who bought it.(Users can keep his/her purchased movies.)
+
+SELECT movies.title, movies.price, movies.genre
+  FROM movies, (SELECT MyMvList.user as user_id, MyMvList.movie_id as movie_id, count(myMovies.movie_id) as other_user
+  FROM (SELECT user,movie_id FROM myMovies WHERE user = '21600301@handong.edu') as MyMvList
+  JOIN myMovies
+  ON MyMvList.movie_id = myMovies.movie_id
+  AND (myMovies.user <> '21600301@handong.edu')
+  GROUP BY myMovies.movie_id
+  ORDER BY other_user DESC) as recommend
+  WHERE movies.movie_id = recommend.movie_id
+  AND movies.genre = (select genre from movies where movies.title = 'Avengers')
+LIMIT 3;
+-- while user seeing the information of the movie, similar movies are recommended
+
+SELECT title, genre, price, personInMovie.name
+  FROM personInMovie, (SELECT title, genre, price, MoviePersonel.official_id as relatedP
+  FROM movies
+  JOIN MoviePersonel
+  ON movies.movie_id = MoviePersonel.movie_id
+  ) peoplerelated
+  WHERE personInMovie.role = 'director'
+  AND personInMovie.official_id = relatedP
+  AND personInMovie.name LIKE '%Christopher Nolan%';
+-- Movies, produced by specific director, are all able to be shown
+
+SELECT title, genre, price, personInMovie.name
+  FROM personInMovie, (SELECT title, genre, price, MoviePersonel.official_id as relatedP
+  FROM movies
+  JOIN MoviePersonel
+  ON movies.movie_id = MoviePersonel.movie_id
+  ) peoplerelated
+  WHERE personInMovie.role = 'actor'
+  AND personInMovie.official_id = relatedP
+  AND personInMovie.name LIKE '%Leonardo DiCaprio%';
+-- Same way, All Movies where specific one actor/actress starred in are also able to be shown
+
+SELECT title, genre, price FROM movies WHERE studio LIKE '%warner brothers%';
+-- Search for studio name is warner brothers
+
+--
+-- 'Comments' Query
+
+SELECT * FROM comments_movies ORDER BY commented_date DESC LIMIT 4;
+-- Four comments are listed at first, but after that, all comment for one product can are shown if users want to see further comments.
+
+SELECT * FROM comments_movies;
+-- while it’s showing a writer of comment, it also shows score he/she marked.
+
+SELECT * FROM comments_movies ORDER BY commented_date DESC;
+-- comments are listed in latest date order.
+
+UPDATE `comments_movies` SET reported = reported + 1 WHERE (`comment_id` = '5') and (`user_email` = 'hi@gmail.com') and (`movie_id` = '1');
+SELECT * FROM comments_movies;
+-- somebody can report the comment as a spam
+
+UPDATE `comments_movies` SET num_of_likes = num_of_likes + 1 WHERE (`comment_id` = '1') and (`user_email` = 'hjkim@gmail.com') and (`movie_id` = '24');
+SELECT * FROM comments_movies;
+-- comments can get ‘like’ from each user.
 
 
 
