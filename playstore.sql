@@ -112,7 +112,22 @@ WHERE movie_id = 4;
 UPDATE movies SET studio = 'CJ' 
 WHERE movie_id = 5;
 
+ALTER TABLE myMovies ADD rented tinyint(1) default 1;
 
+ALTER TABLE myMovies CHANGE expired_date expired_date datetime 
+default (now() + interval 30 day);
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 1;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 2;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 3;
+
+UPDATE myMovies SET expired_date = DATE_ADD(purchase_date, INTERVAL 30 DAY)
+WHERE movie_id = 4;
 
 /*create movie related tables*/
 
