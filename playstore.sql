@@ -65,6 +65,8 @@ CREATE TABLE IF NOT EXISTS books(
 
 )DEFAULT CHARSET=utf8;
 
+/*movies*/
+
 CREATE TABLE IF NOT EXISTS movies ( 
   movie_id INT NOT NULL AUTO_INCREMENT,
   product_id INT,
@@ -78,7 +80,41 @@ CREATE TABLE IF NOT EXISTS movies (
 
   PRIMARY KEY (movie_id),
   foreign key (product_id) references product(product_id) on delete set null on update cascade
+);
 
+
+INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES 
+(1, 6,'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
+(2, 7,'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
+(3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
+(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500);
+COMMIT;
+
+/*add columns*/
+ALTER TABLE movies ADD downloaded int default 0;
+
+ALTER TABLE movies ADD genre varchar(25);
+UPDATE movies SET genre = 'action' 
+WHERE movie_id = 3 OR movie_id = 4 OR movie_id = 5;
+
+ALTER TABLE movies ADD oscar TINYINT(1) DEFAULT 0;
+
+ALTER TABLE movies ADD studio VARCHAR(20) default 'unknown' AFTER year; 
+UPDATE movies SET studio = 'disney' 
+WHERE movie_id = 1 OR movie_id = 2;
+
+UPDATE movies SET studio = 'marvel' 
+WHERE movie_id = 3;
+
+UPDATE movies SET studio = 'warner brothers' 
+WHERE movie_id = 4;
+
+UPDATE movies SET studio = 'CJ' 
+WHERE movie_id = 5;
+
+
+
+/*create movie related tables*/
 
 CREATE TABLE IF NOT EXISTS myMovies ( 
   user varchar(30) NOT NULL,
@@ -91,6 +127,18 @@ CREATE TABLE IF NOT EXISTS myMovies (
   constraint fk_movie_mymovies foreign key (movie_id) references movies(movie_id) on delete cascade on update cascade
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+INSERT INTO myMovies(user, movie_id) VALUES
+('21600301@handong.edu', 1),
+('21600301@handong.edu', 2),
+('21600301@handong.edu', 3),
+('21500172@handong.edu', 1),
+('21500172@handong.edu', 4),
+('21500771@handong.edu', 1),
+('21500771@handong.edu', 2),
+('21300333@handong.edu', 1);
+
 
 CREATE TABLE IF NOT EXISTS personInMovie(
 	official_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -124,6 +172,19 @@ CREATE TABLE  IF NOT EXISTS MoviePersonel(
     	CONSTRAINT fk_offical FOREIGN KEY (official_id) REFERENCES personInMovie(official_id) on delete CASCADE on update CASCADE,
     	CONSTRAINT fk_movie FOREIGN KEY (movie_id) REFERENCES movies(movie_id) on delete CASCADE on update CASCADE
 );
+
+INSERT INTO MoviePersonel(official_id, movie_id) 
+VALUES (1,4),
+(13,4);
+
+DELIMITER //
+CREATE TRIGGER downdloadedMv
+AFTER INSERT ON myMovies
+FOR EACH ROW 
+BEGIN
+ UPDATE movies SET downloaded = downloaded + 1
+ WHERE movie_id = NEW.movie_id;
+END;//
 
 /*
 CREATE TABLE IF NOT EXISTS wishList(
@@ -163,12 +224,6 @@ INSERT INTO books (book_id, product_id, ISBN, title, author, price, page, genre,
 
 INSERT INTO apps (`app_id`, `product_id`,`app_name`, `description`, `developer_id`, `url`, `price`, `downloaded_num`, `uploaded_date`, `latest_update`, `score`, `rating`, `current_version`, `whats_new`, `required_software`, `size`, `editors_choice`, `coming_soon`, `weekly_recommended`) VALUES ('2', 5 , 'Facebook', 'Keeping up with friends is faster and easier than ever. Share updates and photos, engage with friends and Pages, and stay connected to communities important to you. ', '2', 'https://play.google.com/store/apps/details?id=com.facebook.katana', 'FREE', '1,000,000,000+', '2010-01-01', '2019-05-14', '4.1 total 87,090,209 ', 'Rated for 12+ Parental Guidance Recommended', 'Varies with device', ' Improvements for reliability and speed', 'Varies with device', 'Varies with device', '0', '0', '0');
 
-INSERT INTO movies (`movie_id`,`product_id`, `title`, `year`, `language`, `length`, `age_limit`, `subtitle`, `price`) VALUES 
-(1, 6,'How to train your dragon3', '2019.01.11', 'korean', 104, 0, NULL, 6500) ,
-(2, 7,'wonder', '2017.11.21', 'English', 113, 0, 'korean', 5000),
-(3, 8,'Spiderman: homecoming', '2017.07.23', 'English', 133, 12, 'Korean', 3500),
-(4, 9,'The dark knight', '2009.02.02', 'English', 152, 15, 'Korean', 4500);
-COMMIT;
 
 CREATE TABLE `wish_list` (
   `user_id` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
